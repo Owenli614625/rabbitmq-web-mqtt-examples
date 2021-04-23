@@ -6,7 +6,7 @@
     <style>
       #cnvs {
           border: none;
-          -moz-border-radius: 4px;
+          /* -moz-border-radius: 4px; */
           cursor: url(pencil.cur),crosshair;
           position: absolute;
           overflow: hidden;
@@ -114,7 +114,8 @@ var debug = function(){
   }
 };
 
-var wsbroker = location.hostname;  //mqtt websocket enabled broker
+//var wsbroker = location.hostname;  //mqtt websocket enabled broker
+var wsbroker = "localhost";  //mqtt websocket enabled broker
 var wsport = 15675; // port for above
 
 var client = new Paho.MQTT.Client(wsbroker, wsport, "/ws",
