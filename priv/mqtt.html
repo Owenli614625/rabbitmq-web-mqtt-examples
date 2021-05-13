@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN">
+
 <head>
     <title>Mqtt Websockets</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,7 +76,7 @@
 
         function MQTTconnect() {
             mqtt = new Paho.MQTT.Client(host, port, "/mqtt", clientId);
-           // mqtt.onConnectionLost = onConnectionLost;
+            // mqtt.onConnectionLost = onConnectionLost;
             mqtt.onMessageArrived = onMessageArrived;
             let options = {
                 timeout: 3,
@@ -87,7 +88,7 @@
                 useSSL: useTLS,
                 userName: username,
                 password: password,
-               
+
             };
             mqtt.connect(options);
         }
@@ -104,24 +105,23 @@
             console.log("连接成功");
 
             //订阅TX_topic 主题;获得设备状态信息
-            mqtt.subscribe(TX_topic, {qos: 0},error=>{
-                if(!error)
-                {
+            mqtt.subscribe(TX_topic, { qos: 0 }, error => {
+                if (!error) {
                     console.log("订阅成功");
-                }else{
+                } else {
                     console.log("订阅失败");
                 }
             });
 
             //订阅RX_topic 主题;给设备发送指令
-            mqtt.subscribe(RX_topic, {qos: 0});
+            mqtt.subscribe(RX_topic, { qos: 0 });
 
             //发送控制指令
             message = new Paho.MQTT.Message("app 远程连接设备");
             //set topic
             message.destinationName = RX_topic;
             mqtt.send(message);
-            console.log( " mqtt.send(message)");
+            
         }
 
         // 未连接服务器
@@ -132,22 +132,22 @@
 
         // 接收到mqtt消息
         function onMessageArrived(message) {
+
             
-            console.log(message.destinationName);
-                if(message.destinationName==TX_topic)
-                {
-                    let payload = message.payloadString;
-                    $("#arrivedDiv").append("<div> " + getFormatDate() + " recv msg : topic=" + TX_topic + "  ,payload=" + payload + " </div>")
-                }
-                
-            
-            
+            if (message.destinationName == TX_topic) {
+                let payload = message.payloadString;
+                $("#arrivedDiv").append("<div> " + getFormatDate() + " recv msg : topic=" + TX_topic + "  ,payload=" + payload + " </div>")
+            }
+
+
+
         }
 
         // MQTT 连接初始化
         MQTTconnect();
 
-        // 发送指令测试
+        //=================================指令方法======================================
+
         function testMessageSend() {
             let msg = $("#testMessage").val();
             if (msg == null || msg === '') {
@@ -158,10 +158,75 @@
             //set body
             let message = new Paho.MQTT.Message(msg);
             // set topic
-            console.log(RX_topic);
+            
             message.destinationName = RX_topic;
             mqtt.send(message);
         }
+
+        // 设备状态
+        function testMessageSend1() {
+
+            let msg = {
+                "cmd": "getvsn",
+                "cmdid": "23424242"
+            };
+
+            console.log(msg);
+            // 发布主题消息
+            //set body
+            let message = new Paho.MQTT.Message(JSON.stringify(msg));
+            // set topic
+            
+            message.destinationName = RX_topic;
+            mqtt.send(message);
+        }
+
+        // 蓝牙音乐模式
+        function testMessageSend2() {
+
+            let msg = {
+                "cmd": "music",
+                "cmdid": "23424242",
+                "volume": 60,
+                "volume1": 87,
+                "volume2": 87,
+                "volume3": 87,
+                "mode": 1,
+                "pwmfre": 10
+            }
+            console.log(msg);
+            // 发布主题消息
+            //set body
+            let message = new Paho.MQTT.Message(JSON.stringify(msg));
+            // set topic
+            message.destinationName = RX_topic;
+            mqtt.send(message);
+        }
+
+        // 固频模式
+        function testMessageSend3() {
+           let msg = {
+                "cmd": "music",
+                "cmdid": "23424242",
+                "volume": 60,
+                "volume1": 87,
+                "volume2": 87,
+                "volume3": 87,
+                "mode": 2,
+                "pwmfre": 10
+            }
+            // 发布主题消息
+            console.log(msg);
+            //set body
+            let message = new Paho.MQTT.Message(JSON.stringify(msg));
+            // set topic
+            message.destinationName = RX_topic;
+            mqtt.send(message);
+        }
+
+
+
+        //=================================指令方法======================================
 
         function testMessageClean() {
             $("#arrivedDiv").html("<br/>");
@@ -170,16 +235,21 @@
         $(function () {
             $("#myClientIdSpan").html("" + clientId);
         })
-
     </script>
 </head>
 
 <div style="margin-top: 30px;">
-    <span>MQTT设备ID:  </span><span id="myClientIdSpan" style="font-weight: bold;"></span>
-    <br/><br/>
+    <span>MQTT设备ID: </span><span id="myClientIdSpan" style="font-weight: bold;"></span>
+    <br /><br />
     <label style="font-weight: bold" for="testMessage">MQTT消息：</label>
-    <input style="height: 25px; width: 180px;" maxlength="60" value="这是一条测试消息" id="testMessage"/>
-    <button class="button" id="mySendBtn" onclick="testMessageSend()"> 点击发送</button>
+    <input style="height: 25px; width: 180px;" maxlength="60" value='{"cmd":"getvsn","cmdid":"23424242"}' id="testMessage" />
+    <button class="button" id="mySendBtn1" onclick="testMessageSend()"> 发送指令</button>
+    <br>
+    <button class="button" id="mySendBtn1" onclick="testMessageSend1()"> 设备状态</button>
+    <button class="button" id="mySendBtn2" onclick="testMessageSend2()"> 蓝牙音乐模式</button>
+    <button class="button" id="mySendBtn3" onclick="testMessageSend3()"> 固频模式</button>
+
+
 
     <button class="button" id="cleanSendBtn" onclick="testMessageClean()"> 清空日志</button>
 </div>
@@ -187,11 +257,11 @@
 <div style="margin-top: 30px">
 
     <div style="font-size: 20px;color: darkcyan"> 接收到的mqtt消息</div>
-    <hr/>
+    <hr />
     <div id="arrivedDiv" style="height:600px; width:1000px; overflow:scroll; background:#EEEEEE;">
-        <br/>
+        <br />
     </div>
 
 </div>
-</html>
 
+</html>
