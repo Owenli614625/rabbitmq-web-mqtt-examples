@@ -44,7 +44,7 @@ if (canvas.getContext) {
   img.onload = function() {
     ctx.drawImage(img, 230, 160);                                 //绘制图片(图片，left ,top)
   };
-  img.src = 'bunny.png';
+  img.src = '18B20中文.pdf';
 
   draw = function(p) {
     ctx.beginPath();
@@ -68,8 +68,8 @@ if (canvas.getContext) {
 
     ctx.drawImage(img, 23, 160);                                  
 
-    ctx.strokeStyle = "#FF0000";  //设置画笔颜色
-    ctx.lineWidth = "20";     //设置画笔的宽度
+    ctx.strokeStyle = "#FF0000";                                 //设置画笔颜色
+    ctx.lineWidth = "20";                                        //设置画笔的宽度
     ctx.lineCap = "round";
 
     $.map(lines, function (p) {
@@ -123,7 +123,7 @@ var debug = function(){
 var wsbroker = "localhost";  //mqtt websocket enabled broker
 var wsport = 15675; // port for above
 
-var client = new Paho.MQTT.Client(wsbroker, wsport, "/ws",
+var client = new Paho.MQTT.Client(wsbroker, wsport, "/",
     "myclientid_" + parseInt(Math.random() * 100, 10));
 
 client.onConnectionLost = function (responseObject) {
