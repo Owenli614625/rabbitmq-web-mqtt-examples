@@ -138,6 +138,11 @@
                 {
                     let payload = message.payloadString;
                     $("#arrivedDiv").append("<div> " + getFormatDate() + " recv msg : topic=" + TX_topic + "  ,payload=" + payload + " </div>")
+                    if(JSON.parse(payload))
+                    {
+                        JSON.parse(payload);
+                    }
+
                 }
                 
             

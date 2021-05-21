@@ -126,7 +126,76 @@
 
             if (message.destinationName == TX_topic) {
                 let payload = message.payloadString;
+
                 $("#arrivedDiv").append("<div> " + getFormatDate() + " recv msg : topic=" + TX_topic + "  ,payload=" + payload + " </div>")
+                let obj = JSON.parse(payload);
+               
+                console.log(obj);
+
+                if (obj.cmd == "heartbeat2") {
+                    
+                    let keys=obj.hex.substring(2,4);
+                    let value=parseInt(obj.hex.substring(4,6),16);
+                    console.log(keys);
+                    let type="";
+                    if (keys == "01") {
+                        type = "心率";
+                        
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                    } else if (keys == "03") {
+                        type = "呼吸";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    } else if (keys == "4A") {
+                        type = "休眠";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    } else if (keys == "4B") {
+                        type = "轴动包";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    } else if (keys == "4C") {
+                        type = "呼吸弱包";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    } else if (keys == "4D") {
+                        type = "辗转包";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    }
+                   
+            }else if(obj.cmd == "heartbeat1")
+            {
+
+                let keys=obj.hex.substring(2,2);
+                    let type="";
+                    if (keys == "01") {
+                        type = "心率";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    } else if (keys == "03") {
+                        type = "呼吸";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    } else if (keys == "4A") {
+                        type = "休眠";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    } else if (keys == "4B") {
+                        type = "轴动包";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    } else if (keys == "4C") {
+                        type = "呼吸弱包";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    } else if (keys == "4D") {
+                        type = "辗转包";
+                        
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+                    }
             }
 
 
@@ -134,7 +203,7 @@
 
         }
 
-
+    }
         // MQTT 连接初始化
         MQTTconnect();
 
@@ -263,18 +332,18 @@
 
         // 按摩控制
         //包装按摩模式
-        function package_action(){
+        function package_action() {
             let total_cycle = "0001";       //总循环次数,长度4
-            package_cmd=total_cycle+action1.cmd+action2.cmd;
+            package_cmd = total_cycle + action1.cmd + action2.cmd;
             console.log(package_cmd);
             return package_cmd;
         }
 
 
         function testMessageSend5() {
-            
 
-            
+
+
             let msg = {
                 "cmd": "action",
                 "cmdid": "23424242",
@@ -348,7 +417,8 @@
     <br>
 
     <h2>日志管理</h2>
-    <button class="button" style="background-color: #f82b07;" id="cleanSendBtn" onclick="testMessageClean()">清空日志</button>
+    <button class="button" style="background-color: #f82b07;" id="cleanSendBtn"
+        onclick="testMessageClean()">清空日志</button>
     <button class="button" style="background-color: #b0f807;" id="cleanSendBtn" onclick="package_action()">test</button>
 </div>
 
