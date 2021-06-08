@@ -6,8 +6,8 @@
 <head>
     <title>Mqtt Websockets</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
-    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js" type="text/javascript"></script>
+    <script src="./mqttws31.js" type="text/javascript"></script>
+    <script src="./jquery.min.js" type="text/javascript"></script>
     <script src="action.js" type="text/javascript"></script>
 
     <style type="text/css">
@@ -54,13 +54,16 @@
 
     <script type="text/javascript">
         // RabbitMq 服务器IP地址或域名地址
-        const host = 'hz3.51ohh.com';
+        //const host = 'hz3.51ohh.com';
+        const host = '39.103.188.46';
         //WebSocket 协议服务端口，如果是走 HTTPS，设置443端口
-        const port = 9829;  //ws端口9829
+        //const port = 9829;  //ws端口9829
+        const port = 15675;  //ws端口9829
         //设备唯一id
         const clientId = "admin";
-        const deviceID = "XBDGW3C61055C2850";
+        const deviceID = "XBDGW3C61055CD468";
         //需要操作的 Topic,第一级父级 topic
+        '/XBD/GATEWAY/RX/XBDGW3C61055CD468/CMD/'
         let RX_topic = '/XBD/GATEWAY/RX/' + deviceID + '/CMD/'; //给设备发送指令
         let TX_topic = '/XBD/GATEWAY/TX/' + deviceID + '/CMD/'; //接收设备的状态数据
         //服务连接失败后重新尝试连接的时间间隔
@@ -77,7 +80,7 @@
         let mqtt;
 
         function MQTTconnect() {
-            mqtt = new Paho.MQTT.Client(host, port, "/mqtt", clientId);
+            mqtt = new Paho.MQTT.Client(host, port, "/ws", clientId);
             // mqtt.onConnectionLost = onConnectionLost;
             mqtt.onMessageArrived = onMessageArrived;
             let options = {
@@ -88,8 +91,8 @@
                 onSuccess: onConnect,
                 onFailure: onFailure,
                 useSSL: useTLS,
-                userName: username,
-                password: password,
+                userName: "admin",
+                password: "123456",
 
             };
             mqtt.connect(options);
@@ -129,81 +132,80 @@
 
                 $("#arrivedDiv").append("<div> " + getFormatDate() + " recv msg : topic=" + TX_topic + "  ,payload=" + payload + " </div>")
                 let obj = JSON.parse(payload);
-               
+
                 console.log(obj);
 
                 if (obj.cmd == "heartbeat2") {
-                    
-                    let keys=obj.hex.substring(2,4);
-                    let value=parseInt(obj.hex.substring(4,6),16);
+
+                    let keys = obj.hex.substring(2, 4);
+                    let value = parseInt(obj.hex.substring(4, 6), 16);
                     console.log(keys);
-                    let type="";
+                    let type = "";
                     if (keys == "01") {
                         type = "心率";
-                        
 
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
 
                     } else if (keys == "03") {
                         type = "呼吸";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     } else if (keys == "4A") {
                         type = "休眠";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     } else if (keys == "4B") {
                         type = "轴动包";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     } else if (keys == "4C") {
                         type = "呼吸弱包";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     } else if (keys == "4D") {
                         type = "辗转包";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
-                    }
-                   
-            }else if(obj.cmd == "heartbeat1")
-            {
 
-                let keys=obj.hex.substring(2,2);
-                    let type="";
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
+                    }
+
+                } else if (obj.cmd == "heartbeat1") {
+
+                    let keys = obj.hex.substring(2, 2);
+                    let type = "";
                     if (keys == "01") {
                         type = "心率";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     } else if (keys == "03") {
                         type = "呼吸";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     } else if (keys == "4A") {
                         type = "休眠";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     } else if (keys == "4B") {
                         type = "轴动包";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     } else if (keys == "4C") {
                         type = "呼吸弱包";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     } else if (keys == "4D") {
                         type = "辗转包";
-                        
-                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : "+type+" sleep data:" + value + " </div>")
+
+                        $("#arrivedDiv").append("<div> " + getFormatDate() + " type : " + type + " sleep data:" + value + " </div>")
                     }
+                }
+
+
+
+
             }
 
-
-
-
         }
-
-    }
         // MQTT 连接初始化
         MQTTconnect();
 
@@ -243,18 +245,19 @@
             mqtt.send(message);
         }
 
-        // 蓝牙音乐模式
+        // 蓝牙音乐模式开启
         function testMessageSend2() {
 
             let msg = {
                 "cmd": "music",
                 "cmdid": "23424242",
-                "volume": 60,
+                "volume": 85,
                 "volume1": 87,
                 "volume2": 87,
                 "volume3": 87,
                 "mode": 1,
-                "pwmfre": 10
+                "pwmfre": -1,
+                "btname": "辛巴达"
             }
             console.log(msg);
             // 发布主题消息
@@ -264,18 +267,43 @@
             message.destinationName = RX_topic;
             mqtt.send(message);
         }
+
+        // 蓝牙音乐模式关闭
+        function testMessageSend2_1() {
+
+            let msg = {
+                "cmd": "music",
+                "cmdid": "23424242",
+                "volume": 85,
+                "volume1": 87,
+                "volume2": 87,
+                "volume3": 87,
+                "mode": 0,
+                "pwmfre": -1,
+                "btname": "辛巴达"
+            }
+            console.log(msg);
+            // 发布主题消息
+            //set body
+            let message = new Paho.MQTT.Message(JSON.stringify(msg));
+            // set topic
+            message.destinationName = RX_topic;
+            mqtt.send(message);
+        }
+
 
         // 固频模式
         function testMessageSend3() {
             let msg = {
                 "cmd": "music",
                 "cmdid": "23424242",
-                "volume": 60,
+                "volume": 85,
                 "volume1": 87,
                 "volume2": 87,
                 "volume3": 87,
-                "mode": 2,
-                "pwmfre": 10
+                "mode": 1,
+                "pwmfre": 10,
+                "btname": "辛巴达"
             }
             // 发布主题消息
             console.log(msg);
@@ -287,18 +315,42 @@
         }
 
 
-        // 关闭音乐模式
+        // 关闭固频模式
+        function testMessageSend3_1() {
+            let msg = {
+                "cmd": "music",
+                "cmdid": "23424242",
+                "volume": 85,
+                "volume1": 87,
+                "volume2": 87,
+                "volume3": 87,
+                "mode": 1,
+                "pwmfre": -1,
+                "btname": "辛巴达"
+            }
+            // 发布主题消息
+            console.log(msg);
+            //set body
+            let message = new Paho.MQTT.Message(JSON.stringify(msg));
+            // set topic
+            message.destinationName = RX_topic;
+            mqtt.send(message);
+        }
+
+        // 开启扫频模式
         function testMessageSend4() {
             let msg = {
                 "cmd": "music",
                 "cmdid": "23424242",
-                "volume": 60,
+                "volume": 85,
                 "volume1": 87,
                 "volume2": 87,
                 "volume3": 87,
-                "mode": 0,
-                "pwmfre": 10
+                "mode": 1,
+                "pwmfre": 0,
+                "btname": "辛巴达"
             }
+
             // 发布主题消息
             console.log(msg);
             //set body
@@ -308,17 +360,19 @@
             mqtt.send(message);
         }
 
-        // 0 为扫频模式
-        function testMessageSend7() {
+
+        // 开启扫频模式
+        function testMessageSend4_1() {
             let msg = {
                 "cmd": "music",
                 "cmdid": "23424242",
-                "volume": 87,
+                "volume": 85,
                 "volume1": 87,
                 "volume2": 87,
                 "volume3": 87,
-                "mode": 2,
-                "pwmfre": 0
+                "mode": 1,
+                "pwmfre": -1,
+                "btname": "辛巴达"
             }
 
             // 发布主题消息
@@ -375,8 +429,33 @@
             message.destinationName = RX_topic;
             mqtt.send(message);
         }
+
+        //心跳模式
+        function testMessageSend7() {
+            let msg = {
+                "cmd": "music",
+                "cmdid": "23424242",
+                "volume": 0,
+                "volume1": 70,
+                "volume2": 0,
+                "volume3": 0,
+                "startime":1,
+                "stoptime":20,
+                "mode": 1,
+                "pwmfre": 70,
+                "btname": "辛巴达"
+            }
+            // 发布主题消息
+            console.log(msg);
+            //set body
+            let message = new Paho.MQTT.Message(JSON.stringify(msg));
+            // set topic
+            message.destinationName = RX_topic;
+            mqtt.send(message);
+        }
         //=================================指令方法======================================
 
+        
         function testMessageClean() {
             $("#arrivedDiv").html("<br/>");
         }
@@ -404,18 +483,22 @@
         设备状态</button>
     <h2>音乐模式</h2>
     <button class="button" id="mySendBtn2" onclick="testMessageSend2()"> 蓝牙音乐模式</button>
-    <button class="button" id="mySendBtn3" onclick="testMessageSend3()"> 固频模式</button>
-    <button class="button" id="mySendBtn3" onclick="testMessageSend7()"> 扫频模式</button>
-    <button class="button" style="background-color: #f82b07;" id="mySendBtn4" onclick="testMessageSend4()"> 停止</button>
-
+    <button class="button" id="mySendBtn3" onclick="testMessageSend4()"> 开启扫频模式</button>
+    <button class="button" id="mySendBtn3" onclick="testMessageSend3()"> 开启固频模式</button>
+    <button class="button" id="mySendBtn4" onclick="testMessageSend7()"> 心跳</button>
+    <button class="button" style="background-color: #f82b07;" id="mySendBtn2" onclick="testMessageSend2_1()"> 关闭蓝牙音乐</button>
     <br>
 
+    <br>
     <h2>按摩控制</h2>
     <button class="button" id="mySendBtn4" onclick="testMessageSend5()"> 按摩控制</button>
 
     <button class="button" style="background-color: #f82b07;" id="mySendBtn4" onclick="testMessageSend6()">按摩停止</button>
     <br>
 
+    
+        
+    <br>
     <h2>日志管理</h2>
     <button class="button" style="background-color: #f82b07;" id="cleanSendBtn"
         onclick="testMessageClean()">清空日志</button>
